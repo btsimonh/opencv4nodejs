@@ -1,5 +1,4 @@
 
-var ncp = require('ncp').ncp;
 var path = require('path');
 var fs = require('fs-extra');
 var child_process = require('child_process');
