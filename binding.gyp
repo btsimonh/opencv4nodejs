@@ -13,7 +13,8 @@
 			"<!(node -e \"require('macro-inferno')\")"
 		],
 		"libraries": [
-			"<!@(node ./lib/libs.js)"
+			"<!@(node ./lib/libs.js)",
+            "-Wl,-rpath,'$$ORIGIN'"
 		],
 		"sources": [
 			"cc/opencv4nodejs.cc",

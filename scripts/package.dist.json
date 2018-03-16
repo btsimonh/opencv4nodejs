@@ -1,7 +1,7 @@
 {
-  "name": "opencv4nodejs",
+  "name": "opencv4nodejsdist",
   "version": "3.3.1",
-  "description": "Asynchronous OpenCV 3.x nodejs bindings with JavaScript and TypeScript API.",
+  "description": "Dist of Asynchronous OpenCV 3.x nodejs bindings with JavaScript and TypeScript API.",
   "keywords": [
     "opencv",
     "cv",
@@ -29,18 +29,8 @@
   "main": "./lib/opencv4nodejs.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "install": "node-gyp rebuild",
-    "configure": "node-gyp configure",
-    "build": "node-gyp configure build",
-    "rebuild": "node-gyp rebuild",
-    "clean": "node-gyp clean",
-    "build-debug": "node-gyp rebuild --debug",
-    "build-dist": "node ./scripts/makedist.js"
+    "postinstall":"node ./scripts/postinstall.js"
   },
-  "gypfile": true,
   "dependencies": {
-    "macro-inferno": "^0.2.1",
-    "nan": "^2.7.0",
-    "opencv-build": "0.0.10"
   }
 }
