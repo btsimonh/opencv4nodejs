@@ -1280,7 +1280,7 @@ NAN_METHOD(Mat::Release) {
     // must get pointer to the original; else we are just getting a COPY and then releasing that!
     cv::Mat *mat = &(Nan::ObjectWrap::Unwrap<Mat>(info.This())->mat);
     mat->release();
-
+}
 
 NAN_METHOD(Mat::GetMemMetrics) {
   Nan::HandleScope scope;
