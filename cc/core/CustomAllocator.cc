@@ -1,6 +1,10 @@
+
+
 #include "CustomAllocator.h"
 //#include <iostream>
 
+// only valid for 3.1.0+
+#if CV_VERSION_MINOR > 0
 
 cv::UMatData* CustomMatAllocator::allocate(int dims, const int* sizes, int type,
                        void* data0, size_t* step, int flags, cv::UMatUsageFlags usageFlags) const
@@ -49,32 +53,32 @@ void CustomMatAllocator::deallocate(cv::UMatData* u) const
 
 
 // method to read the total mem, but mutex protected.
-__int64 CustomMatAllocator::readtotalmem(){
-    __int64 Total;
+int64_t CustomMatAllocator::readtotalmem(){
+    int64_t Total;
     variables->MemTotalChangeMutex.lock();
     Total = variables->TotalMem;
     variables->MemTotalChangeMutex.unlock();
     return Total;
 }
 
-__int64 CustomMatAllocator::readmeminformed(){
-    __int64 Total;
+int64_t CustomMatAllocator::readmeminformed(){
+    int64_t Total;
     variables->MemTotalChangeMutex.lock();
     Total = variables->TotalJSMem;
     variables->MemTotalChangeMutex.unlock();
     return Total;
 }
 
-__int64 CustomMatAllocator::readnumallocated(){
-    __int64 Total;
+int64_t CustomMatAllocator::readnumallocated(){
+    int64_t Total;
     variables->MemTotalChangeMutex.lock();
     Total = variables->CountMemAllocs;
     variables->MemTotalChangeMutex.unlock();
     return Total;
 }
 
-__int64 CustomMatAllocator::readnumdeallocated(){
-    __int64 Total;
+int64_t CustomMatAllocator::readnumdeallocated(){
+    int64_t Total;
     variables->MemTotalChangeMutex.lock();
     Total = variables->CountMemDeAllocs;
     variables->MemTotalChangeMutex.unlock();
@@ -89,7 +93,7 @@ void CustomMatAllocator::FixupJSMem() const {
     if (variables->main_thread_id == this_id){
         //std::cout << "thead is main " << this_id << "\n";
         variables->MemTotalChangeMutex.lock();
-        __int64 adjust = variables->TotalMem - variables->TotalJSMem;
+        int64_t adjust = variables->TotalMem - variables->TotalJSMem;
         variables->TotalJSMem += adjust;
         variables->MemTotalChangeMutex.unlock();
         
@@ -102,4 +106,7 @@ void CustomMatAllocator::FixupJSMem() const {
         //std::cout << "thead not main " << this_id << "\n";
     }
 }
+
+// end only valid for 3.1.0+
+#endif
 

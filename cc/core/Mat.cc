@@ -1,20 +1,25 @@
 #include "Mat.h"
 #include "MatImgproc.h"
 #include "MatCalib3d.h"
-#include "CustomAllocator.h"
 
 
 Nan::Persistent<v8::FunctionTemplate> Mat::constructor;
 
+// only valid for 3.1.0+
+#if CV_VERSION_MINOR > 0
 CustomMatAllocator *Mat::custommatallocator = NULL;
+#endif  
   
 
 NAN_MODULE_INIT(Mat::Init) {
     
+// only valid for 3.1.0+
+#if CV_VERSION_MINOR > 0
   if (NULL == custommatallocator){
     custommatallocator = new CustomMatAllocator();
     cv::Mat::setDefaultAllocator(custommatallocator);
   }
+#endif  
 
   v8::Local<v8::FunctionTemplate> ctor = Nan::New<v8::FunctionTemplate>(Mat::New);
   constructor.Reset(ctor);
@@ -183,11 +188,15 @@ NAN_METHOD(Mat::New) {
 	}
 	self->Wrap(info.Holder());
     
+// only valid for 3.1.0+
+#if CV_VERSION_MINOR > 0
     // I *think* New should be called in JS thread where cv::mat has been created async,
     // so a good place to rationalise memory
     if (self->custommatallocator){
         self->custommatallocator->FixupJSMem();
     }
+#endif
+    
 	FF_RETURN(info.Holder());
 }
 
@@ -1282,27 +1291,3 @@ NAN_METHOD(Mat::Release) {
     mat->release();
 }
 
-NAN_METHOD(Mat::GetMemMetrics) {
-  Nan::HandleScope scope;
-    
-  __int64 TotalAlloc = -1;
-  __int64 TotalKnownByJS = -1;
-  __int64 NumAllocations = -1;
-  __int64 NumDeAllocations = -1;
-
-  if (Mat::custommatallocator != NULL){
-    TotalAlloc = Mat::custommatallocator->readtotalmem();
-    TotalKnownByJS = Mat::custommatallocator->readmeminformed();
-    NumAllocations = Mat::custommatallocator->readnumallocated();
-    NumDeAllocations = Mat::custommatallocator->readnumdeallocated();
-  }
-
-  FF_OBJ result = FF_NEW_OBJ(); 
-  Nan::Set(result, FF_NEW_STRING("TotalAlloc"), Nan::New((int)TotalAlloc));
-  Nan::Set(result, FF_NEW_STRING("TotalKnownByJS"), Nan::New((int)TotalKnownByJS));
-  Nan::Set(result, FF_NEW_STRING("NumAllocations"), Nan::New((int)NumAllocations));
-  Nan::Set(result, FF_NEW_STRING("NumDeAllocations"), Nan::New((int)NumDeAllocations));
-
-  info.GetReturnValue().Set(result);
-  return;
-}
