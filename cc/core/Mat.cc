@@ -104,7 +104,6 @@ NAN_MODULE_INIT(Mat::Init) {
 
 	Nan::SetPrototypeMethod(ctor, "release", Release);
 
-	Nan::SetPrototypeMethod(ctor, "getMemMetrics", GetMemMetrics);
 	FF_PROTO_SET_MAT_OPERATIONS(ctor);
 
 	MatImgproc::Init(ctor);
