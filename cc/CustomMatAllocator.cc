@@ -1,16 +1,13 @@
-
-
-#include "CustomAllocator.h"
+#include "CustomMatAllocator.h"
 //#include <iostream>
 
-// only valid for 3.1.0+
-#if CV_VERSION_MINOR > 0
+#ifdef OPENCV4NODEJS_ENABLE_EXTERNALMEMTRACKING
 
 cv::UMatData* CustomMatAllocator::allocate(int dims, const int* sizes, int type,
                        void* data0, size_t* step, int flags, cv::UMatUsageFlags usageFlags) const
 {
     cv::UMatData* u = stdAllocator->allocate(dims, sizes, type, data0, step, flags, usageFlags);
-    
+
     if (NULL != u){
         u->prevAllocator = u->currAllocator = this;
         if( !(u->flags & cv::UMatData::USER_ALLOCATED) ){
@@ -22,7 +19,7 @@ cv::UMatData* CustomMatAllocator::allocate(int dims, const int* sizes, int type,
                 variables->MemTotalChangeMutex.unlock();
                 this->FixupJSMem();
             } catch (...){
-                printf("exception adjusting memory\n");
+                printf("CustomMatAllocator::allocate - exception adjusting memory\n");
             }
         }
     }
@@ -96,7 +93,7 @@ void CustomMatAllocator::FixupJSMem() const {
         int64_t adjust = variables->TotalMem - variables->TotalJSMem;
         variables->TotalJSMem += adjust;
         variables->MemTotalChangeMutex.unlock();
-        
+
         if (adjust){
             //printf("will call Nan ajust by %d\n", (int)adjust);
             Nan::AdjustExternalMemory(adjust);

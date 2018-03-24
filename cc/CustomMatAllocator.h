@@ -1,6 +1,5 @@
-#ifndef __FF_CUSTOMALLOCATOR_H__
-#define __FF_CUSTOMALLOCATOR_H__
-
+#ifndef __FF_CUSTOMATMALLOCATOR_H__
+#define __FF_CUSTOMATMALLOCATOR_H__
 
 #include <thread>
 #include <stdint.h>
@@ -17,14 +16,18 @@
 
 // only valid for 3.1.0+
 #if CV_VERSION_MINOR > 0
+    #define OPENCV4NODEJS_ENABLE_EXTERNALMEMTRACKING 1
+#endif
 
+
+#ifdef OPENCV4NODEJS_ENABLE_EXTERNALMEMTRACKING
 
 class CustomMatAllocator : public cv::MatAllocator
 {
 public:
     // strange evilness of the functions being tagged const means that the fns cant change
     // stuff in the class instance.
-    // so instead create constant pointer to a structure which we are allowed to change, even 
+    // so instead create constant pointer to a structure which we are allowed to change, even
     // from a const function.
     typedef struct tag_Variables {
         cv::Mutex MemTotalChangeMutex;
@@ -37,18 +40,19 @@ public:
         std::thread::id main_thread_id;
     } VARIABLES;
 
-    CustomMatAllocator( ) { 
-        stdAllocator = cv::Mat::getStdAllocator(); 
+    CustomMatAllocator( ) {
+        stdAllocator = cv::Mat::getStdAllocator();
         variables = new VARIABLES;
         variables->TotalMem = 0; // total mem allocated by this allocator
         variables->CountMemAllocs = 0;
         variables->CountMemDeAllocs = 0;
         variables->TotalJSMem = 0; // total mem told to JS so far
-        
+
         variables->main_thread_id = std::this_thread::get_id();
     }
-    ~CustomMatAllocator( ) { 
+    ~CustomMatAllocator( ) {
         delete variables;
+        variables = NULL;
     }
 
     cv::UMatData* allocate(int dims, const int* sizes, int type,
@@ -64,10 +68,10 @@ public:
     // function which adjusts NAN mem to match allocated mem.
     // WILL ONLY ACTUALLY DO ANYTHING FROM MAIN JS LOOP
     void FixupJSMem() const;
-    
+
 
     VARIABLES *variables;
-    
+
     const cv::MatAllocator* stdAllocator;
 };
 

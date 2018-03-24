@@ -132,6 +132,7 @@ export class Mat {
   erode(kernel: Mat, anchor?: Point2, iterations?: number, borderType?: number): Mat;
   erodeAsync(kernel: Mat, anchor?: Point2, iterations?: number, borderType?: number): Promise<Mat>;
   exp(): Mat;
+  log(): Mat;
   filter2D(ddepth: number, kernel: Mat, anchor?: Point2, delta?: number, borderType?: number): Mat;
   filter2DAsync(ddepth: number, kernel: Mat, anchor?: Point2, delta?: number, borderType?: number): Promise<Mat>;
   filterSpeckles(newVal: number, maxSpeckleSize: number, maxDiff: number): { newPoints1: Point2[], newPoints2: Point2[] };
@@ -286,6 +287,10 @@ export class Mat {
   warpPerspectiveAsync(transforMationMatrix: Mat, size?: Size, flags?: number, borderMode?: number): Promise<Mat>;
   watershed(markers: Mat): Mat;
   watershedAsync(markers: Mat): Promise<Mat>;
+  goodFeaturesToTrack(maxCorners: number, qualityLevel: number, minDistance: number, mask?: Mat, blockSize?: number, useHarrisDetector?: boolean, harrisK?: number): Point2[];
+  goodFeaturesToTrackAsync(maxCorners: number, qualityLevel: number, minDistance: number, mask?: Mat, blockSize?: number, useHarrisDetector?: boolean, harrisK?: number): Promise<Point2[]>;
+  goodFeaturesToTrack(maxCorners: number, qualityLevel: number, minDistance: number, mask?: Mat, blockSize?: number, gradientSize?: number, useHarrisDetector?: boolean, harrisK?: number): Point2[];
+  goodFeaturesToTrackAsync(maxCorners: number, qualityLevel: number, minDistance: number, mask?: Mat, blockSize?: number, gradientSize?: number, useHarrisDetector?: boolean, harrisK?: number): Promise<Point2[]>;
 
   static eye(rows: number, cols: number, type: number): Mat;
 }

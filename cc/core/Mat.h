@@ -8,24 +8,14 @@
 #include "RotatedRect.h"
 #include "Workers.h"
 
-// only valid for 3.1.0+
-#if CV_VERSION_MINOR > 0
-#include "CustomAllocator.h"
-#endif
-
 #ifndef __FF_MAT_H__
 #define __FF_MAT_H__
 
 class Mat : public Nan::ObjectWrap {
 public:
-  cv::Mat mat;
+	cv::Mat mat;
   
-// only valid for 3.1.0+
-#if CV_VERSION_MINOR > 0
-  static CustomMatAllocator *custommatallocator;
-#endif
-
-  static NAN_MODULE_INIT(Init);
+	static NAN_MODULE_INIT(Init);
 	static NAN_METHOD(New);
 
 	static NAN_METHOD(Eye);
@@ -119,6 +109,9 @@ public:
 	static NAN_METHOD(ConvertScaleAbs);
 	static NAN_METHOD(ConvertScaleAbsAsync);
 
+	struct GoodFeaturesToTrackWorker;
+	static NAN_METHOD(GoodFeaturesToTrack);
+	static NAN_METHOD(GoodFeaturesToTrackAsync);
 
 	FF_INIT_MAT_OPERATIONS();
 	static NAN_METHOD(Dot) {
