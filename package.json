@@ -34,8 +34,7 @@
     "build": "node-gyp configure build",
     "rebuild": "node-gyp rebuild",
     "clean": "node-gyp clean",
-    "build-debug": "node-gyp rebuild --debug",
-    "build-dist": "node ./scripts/makedist.js"
+    "build-debug": "node-gyp rebuild --debug"
   },
   "gypfile": true,
   "dependencies": {
